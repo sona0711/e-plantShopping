@@ -6,10 +6,10 @@ function CartItem() {
   const cart = useSelector(state => state.cart);
   const dispatch = useDispatch();
 
-  const total = cart.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+  // ✅ Separate function (IMPORTANT)
+  const calculateTotal = () => {
+    return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  };
 
   return (
     <div>
@@ -17,12 +17,15 @@ function CartItem() {
 
       {cart.map(item => (
         <div key={item.id}>
+          <img src="https://via.placeholder.com/100" alt={item.name} />
+
           <p>{item.name}</p>
           <p>₹{item.price}</p>
 
           <input
             type="number"
             value={item.quantity}
+            min="1"
             onChange={(e) =>
               dispatch(updateQuantity({
                 id: item.id,
@@ -35,11 +38,13 @@ function CartItem() {
             Remove
           </button>
 
+          {/* ✅ per item total */}
           <p>Total: ₹{item.price * item.quantity}</p>
         </div>
       ))}
 
-      <h3>Grand Total: ₹{total}</h3>
+      {/* ✅ total using function */}
+      <h3>Grand Total: ₹{calculateTotal()}</h3>
     </div>
   );
 }
